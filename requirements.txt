@@ -1,0 +1,8 @@
+# Components
+black
+pydantic
+
+# API
+uvicorn
+fastapi
+httpx
