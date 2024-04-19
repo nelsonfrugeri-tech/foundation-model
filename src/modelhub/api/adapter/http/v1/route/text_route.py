@@ -11,7 +11,7 @@ text_route = APIRouter()
     "/text",
     response_model=TextResponse,
     response_model_exclude_none=True,
-    status_code=200
+    status_code=200,
 )
 def text(text_request_body: TextRequest):
     text_business = TextBusiness()
