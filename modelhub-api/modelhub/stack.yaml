@@ -1,0 +1,15 @@
+schema-version: v1
+kind: stack
+metadata:
+  name: modelhub
+  display-name: modelhub
+  description: The purpose of the Model Hub is to centralize the offer of foundation models
+  version: 0.0.1
+spec:
+  repository: https://github.com/nelsonfrugeri-tech/modelhub.git
+  docs:
+    en-us: docs/en_us/docs.md
+    pt-br: docs/pt_br/docs.md
+  plugins:
+    app:
+      - name: genai-platform/stk-plugin-app-scaffolding-python-api@0.0.1
