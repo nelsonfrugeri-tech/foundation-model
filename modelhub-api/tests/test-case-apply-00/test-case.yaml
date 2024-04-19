@@ -1,0 +1,13 @@
+schema-version: v1
+kind: test
+spec:
+  type: plugin
+  mode: apply
+  inputs:
+    resource: "Customer"
+    method: "PATCH"
+  inputs-envs: {}
+  requires:
+    connections: []
+  generates:
+    connections: []
