@@ -14,5 +14,4 @@ text_route = APIRouter()
     status_code=200,
 )
 def text(text_request_body: TextRequest):
-    text_business = TextBusiness()
-    return text_business.generate(text_request_body)
+    return TextBusiness().generate(text_request_body)

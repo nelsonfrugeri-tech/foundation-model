@@ -12,4 +12,6 @@ class OpenAIService:
         self.client = OpenAI(api_key=os.getenv("OPENAI_KEY"))
 
     def chat_completion(self, chat_completion_request: ChatCompletionRequest):
-        return self.client.chat.completions.create(**chat_completion_request.dict())
+        return self.client.chat.completions.create(
+            **chat_completion_request.model_dump()
+        )

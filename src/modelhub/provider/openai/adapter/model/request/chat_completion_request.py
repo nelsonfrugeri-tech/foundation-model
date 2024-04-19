@@ -1,4 +1,4 @@
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator
 from typing import List, Optional
 
 
@@ -16,7 +16,7 @@ class ChatCompletionRequest(BaseModel):
     n: Optional[int] = None
     stop: Optional[List[str]] = None
 
-    @validator("temperature", "top_p")
+    @field_validator("temperature", "top_p")
     def check_probability(cls, v):
         if v is not None and (v < 0.0 or v > 1.0):
             raise ValueError("Probability values must be between 0 and 1")

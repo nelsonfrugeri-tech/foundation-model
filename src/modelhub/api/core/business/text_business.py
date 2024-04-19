@@ -15,11 +15,12 @@ class TextBusiness:
         self.openai = OpenAIService()
 
     def generate(self, text_request_body: TextRequest):
-        message_dicts = [msg.dict() for msg in text_request_body.prompt.messages]
-
         response = self.openai.chat_completion(
             ChatCompletionRequest(
-                model=text_request_body.provider.model.name, messages=message_dicts
+                model=text_request_body.provider.model.name,
+                messages=[
+                    msg.model_dump() for msg in text_request_body.prompt.messages
+                ],
             )
         )
 
