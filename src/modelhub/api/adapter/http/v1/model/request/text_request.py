@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 class ProviderModel(BaseModel):
     name: str
@@ -32,4 +32,4 @@ class Tool(BaseModel):
 class TextRequest(BaseModel):
     provider: Provider
     prompt: Prompt
-    tools: List[Tool]
+    tools: Optional[List[Tool]]

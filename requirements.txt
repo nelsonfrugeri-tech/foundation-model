@@ -6,3 +6,6 @@ pydantic
 uvicorn
 fastapi
 httpx
+
+# Providers
+openai
