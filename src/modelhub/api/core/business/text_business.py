@@ -21,6 +21,7 @@ class TextBusiness:
                 messages=[
                     msg.model_dump() for msg in text_request_body.prompt.messages
                 ],
+                temperature=text_request_body.prompt.parameter.temperature,
             )
         )
 

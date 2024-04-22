@@ -1,6 +1,10 @@
 from pydantic import BaseModel, field_validator
 from typing import List, Optional
 
+from modelhub.api.adapter.http.v1.model.exception.bad_request_exception import (
+    BadRequestException,
+)
+
 
 class Message(BaseModel):
     role: str
@@ -17,7 +21,9 @@ class ChatCompletionRequest(BaseModel):
     stop: Optional[List[str]] = None
 
     @field_validator("temperature", "top_p")
-    def check_probability(cls, v):
-        if v is not None and (v < 0.0 or v > 1.0):
-            raise ValueError("Probability values must be between 0 and 1")
-        return v
+    def check_probability(cls, value, ctx):
+        if value is not None and (value < 0.0 or value > 1.0):
+            raise BadRequestException(
+                params=[f"The {ctx.field_name} field must be between 0 and 1"]
+            )
+        return value
