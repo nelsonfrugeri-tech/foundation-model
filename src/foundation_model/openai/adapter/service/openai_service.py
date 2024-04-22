@@ -2,7 +2,7 @@ import os
 
 from openai import OpenAI
 
-from modelhub.provider.openai.adapter.model.request.chat_completion_request import (
+from foundation_model.openai.adapter.model.request.chat_completion_request import (
     ChatCompletionRequest,
 )
 

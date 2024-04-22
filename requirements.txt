@@ -9,3 +9,4 @@ httpx
 
 # Providers
 openai
+anthropic

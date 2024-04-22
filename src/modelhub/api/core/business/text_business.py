@@ -1,42 +1,15 @@
-import json
-
 from modelhub.api.adapter.http.v1.model.request.text_request import TextRequest
 from modelhub.api.adapter.http.v1.model.response.text_response import *
-
-from modelhub.provider.openai.adapter.model.request.chat_completion_request import (
-    ChatCompletionRequest,
-)
-from modelhub.provider.openai.adapter.service.openai_service import OpenAIService
+from foundation_model.provider import ProviderHub
 
 
 class TextBusiness:
 
     def __init__(self):
-        self.openai = OpenAIService()
+        self.provider_hub = ProviderHub()
 
     def generate(self, text_request_body: TextRequest):
-        response = self.openai.chat_completion(
-            ChatCompletionRequest(
-                model=text_request_body.provider.model.name,
-                messages=[
-                    msg.model_dump() for msg in text_request_body.prompt.messages
-                ],
-                temperature=text_request_body.prompt.parameter.temperature,
-            )
-        )
-
-        return TextResponse(
-            usage=Usage(
-                completionTokens=response.usage.completion_tokens,
-                promptTokens=response.usage.prompt_tokens,
-                totalTokens=response.usage.total_tokens,
-            ),
-            prompt=Prompt(
-                messages=[
-                    Message(
-                        role=response.choices[0].message.role,
-                        content=response.choices[0].message.content,
-                    )
-                ]
-            ),
+        return self.provider_hub.generate_text(
+            provider_name=text_request_body.provider.name,
+            text_request_body=text_request_body
         )
