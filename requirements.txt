@@ -1,6 +1,6 @@
 # Components
 black
-pydantic
+pydantic==2.7.0
 
 # API
 uvicorn
@@ -8,5 +8,6 @@ fastapi
 httpx
 
 # Providers
-openai
 anthropic
+openai
+boto3
