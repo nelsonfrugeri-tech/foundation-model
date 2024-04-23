@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-from modelhub.api.adapter.http.v1.route.health_route import health_router
-from modelhub.api.adapter.http.v1.route.text_route import text_route
+from hub.api.adapter.http.v1.route.health_route import health_router
+from hub.api.adapter.http.v1.route.text_route import text_route
 
 
 def router():

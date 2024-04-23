@@ -1,7 +1,7 @@
 from pydantic import BaseModel, field_validator
 from typing import List, Optional
 
-from modelhub.api.adapter.http.v1.model.exception.bad_request_exception import (
+from hub.api.adapter.http.v1.model.exception.bad_request_exception import (
     BadRequestException,
 )
 
