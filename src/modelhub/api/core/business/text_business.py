@@ -11,5 +11,5 @@ class TextBusiness:
     def generate(self, text_request_body: TextRequest):
         return self.provider_hub.generate_text(
             provider_name=text_request_body.provider.name,
-            text_request_body=text_request_body
+            text_request_body=text_request_body,
         )

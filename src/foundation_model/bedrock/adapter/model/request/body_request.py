@@ -4,7 +4,7 @@ from typing import List, Optional
 
 class Content(BaseModel):
     type: str
-    text:str
+    text: str
 
 
 class Message(BaseModel):

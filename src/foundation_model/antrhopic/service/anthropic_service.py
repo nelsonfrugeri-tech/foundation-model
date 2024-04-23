@@ -2,7 +2,9 @@ import os
 
 from anthropic import Anthropic
 
-from foundation_model.antrhopic.adapter.model.request.message_request import MessageRequest
+from foundation_model.antrhopic.adapter.model.request.message_request import (
+    MessageRequest,
+)
 
 
 class AnthropicService:
@@ -10,6 +12,4 @@ class AnthropicService:
         self.client = Anthropic(api_key=os.getenv("ANTHROPIC_KEY"))
 
     def message(self, message_request: MessageRequest):
-        return self.client.messages.create(
-            **message_request.model_dump()
-        )
+        return self.client.messages.create(**message_request.model_dump())

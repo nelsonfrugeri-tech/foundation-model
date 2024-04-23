@@ -3,7 +3,9 @@ from modelhub.api.adapter.http.v1.model.response.text_response import *
 
 from foundation_model.port.interface_port import InterfacePort
 from foundation_model.antrhopic.service.anthropic_service import AnthropicService
-from foundation_model.antrhopic.adapter.model.request.message_request import MessageRequest
+from foundation_model.antrhopic.adapter.model.request.message_request import (
+    MessageRequest,
+)
 
 
 class AnthropicAdapter(InterfacePort):
@@ -26,7 +28,9 @@ class AnthropicAdapter(InterfacePort):
             usage=Usage(
                 completionTokens=response.usage.output_tokens,
                 promptTokens=response.usage.input_tokens,
-                totalTokens=(response.usage.input_tokens + response.usage.output_tokens),
+                totalTokens=(
+                    response.usage.input_tokens + response.usage.output_tokens
+                ),
             ),
             prompt=Prompt(
                 messages=[

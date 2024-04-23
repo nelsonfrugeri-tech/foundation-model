@@ -7,6 +7,7 @@ from foundation_model.port.interface_port import InterfacePort
 from foundation_model.bedrock.service.bedrock_service import BedrockService
 from foundation_model.bedrock.adapter.model.request.body_request import *
 
+
 class BedrockAdapter(InterfacePort):
     def __init__(self):
         self.bedrock = BedrockService()
@@ -17,16 +18,13 @@ class BedrockAdapter(InterfacePort):
             body_request=BodyRequest(
                 messages=[
                     Message(
-                        role=msg.role,
-                        content=Content(
-                            type="text",
-                            text=msg.content
-                        )
-                    ) for msg in text_request_body.prompt.messages
+                        role=msg.role, content=Content(type="text", text=msg.content)
+                    )
+                    for msg in text_request_body.prompt.messages
                 ],
                 temperature=text_request_body.prompt.parameter.temperature,
                 max_tokens=text_request_body.prompt.parameter.maxTokens,
-            )
+            ),
         )
 
         result = json.loads(response.get("body").read())
@@ -35,7 +33,9 @@ class BedrockAdapter(InterfacePort):
             usage=Usage(
                 completionTokens=result["usage"]["input_tokens"],
                 promptTokens=result["usage"]["output_tokens"],
-                totalTokens=(result["usage"]["input_tokens"] + result["usage"]["output_tokens"]),
+                totalTokens=(
+                    result["usage"]["input_tokens"] + result["usage"]["output_tokens"]
+                ),
             ),
             prompt=Prompt(
                 messages=[
@@ -46,4 +46,3 @@ class BedrockAdapter(InterfacePort):
                 ]
             ),
         )
-
