@@ -3,11 +3,11 @@ from foundation_model.port.interface_port import InterfacePort
 from modelhub.api.adapter.http.v1.model.request.text_request import TextRequest
 from modelhub.api.adapter.http.v1.model.response.text_response import *
 
-from foundation_model.openai.adapter.model.request.chat_completion_request import (
+from foundation_model.provider.openai.adapter.model.request.chat_completion_request import (
     ChatCompletionRequest,
 )
 
-from foundation_model.openai.adapter.service.openai_service import OpenAIService
+from foundation_model.provider.openai.service.openai_service import OpenAIService
 
 
 class OpenAIAdapter(InterfacePort):

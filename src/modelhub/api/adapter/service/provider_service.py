@@ -1,12 +1,12 @@
 from modelhub.api.adapter.http.v1.model.request.text_request import TextRequest
 
-from foundation_model.openai.adapter.openai_adapter import OpenAIAdapter
-from foundation_model.antrhopic.adapter.anthropic_adapter import AnthropicAdapter
-from foundation_model.bedrock.adapter.bedrock_adapter import BedrockAdapter
+from foundation_model.provider.openai.adapter.openai_adapter import OpenAIAdapter
+from foundation_model.provider.antrhopic.adapter.anthropic_adapter import AnthropicAdapter
+from foundation_model.provider.bedrock.adapter.bedrock_adapter import BedrockAdapter
 from foundation_model.port.interface_port import InterfacePort
 
 
-class ProviderHub:
+class ProviderService:
     def __init__(self):
         self.providers = {
             "openai": OpenAIAdapter(),

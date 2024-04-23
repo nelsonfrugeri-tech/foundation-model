@@ -4,7 +4,7 @@ import boto3
 
 from dotenv import load_dotenv
 
-from foundation_model.bedrock.adapter.model.request.body_request import BodyRequest
+from foundation_model.provider.bedrock.adapter.model.request.body_request import BodyRequest
 
 
 class BedrockService():

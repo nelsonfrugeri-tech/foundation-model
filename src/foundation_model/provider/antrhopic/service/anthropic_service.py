@@ -2,7 +2,7 @@ import os
 
 from anthropic import Anthropic
 
-from foundation_model.antrhopic.adapter.model.request.message_request import (
+from foundation_model.provider.antrhopic.adapter.model.request.message_request import (
     MessageRequest,
 )
 

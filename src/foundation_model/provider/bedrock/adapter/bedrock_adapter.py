@@ -4,8 +4,9 @@ from modelhub.api.adapter.http.v1.model.request.text_request import TextRequest
 from modelhub.api.adapter.http.v1.model.response.text_response import *
 
 from foundation_model.port.interface_port import InterfacePort
-from foundation_model.bedrock.service.bedrock_service import BedrockService
-from foundation_model.bedrock.adapter.model.request.body_request import *
+
+from foundation_model.provider.bedrock.service.bedrock_service import BedrockService
+from foundation_model.provider.bedrock.adapter.model.request.body_request import *
 
 
 class BedrockAdapter(InterfacePort):

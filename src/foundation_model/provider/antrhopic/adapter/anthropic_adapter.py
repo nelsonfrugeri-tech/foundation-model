@@ -2,8 +2,9 @@ from modelhub.api.adapter.http.v1.model.request.text_request import TextRequest
 from modelhub.api.adapter.http.v1.model.response.text_response import *
 
 from foundation_model.port.interface_port import InterfacePort
-from foundation_model.antrhopic.service.anthropic_service import AnthropicService
-from foundation_model.antrhopic.adapter.model.request.message_request import (
+
+from foundation_model.provider.antrhopic.service.anthropic_service import AnthropicService
+from foundation_model.provider.antrhopic.adapter.model.request.message_request import (
     MessageRequest,
 )
 
