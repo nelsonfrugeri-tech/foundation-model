@@ -1,6 +1,7 @@
 # Components
 black
 pydantic==2.7.0
+python-dotenv
 
 # API
 uvicorn
