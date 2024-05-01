@@ -9,10 +9,11 @@ class Content(BaseModel):
 
 class Message(BaseModel):
     role: str
-    content: Content
+    content: List[Content]
 
 
-class BodyRequest(BaseModel):
+class Claude3Request(BaseModel):
+    anthropic_version: str = "bedrock-2023-05-31"
     messages: List[Message] = []
     max_tokens: Optional[int] = None
     temperature: Optional[float] = None

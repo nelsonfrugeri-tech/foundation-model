@@ -4,7 +4,7 @@ import boto3
 
 from dotenv import load_dotenv
 
-from provider.bedrock.adapter.model.request.body_request import BodyRequest
+from provider.bedrock.provider.antropic.model.request.claude_3_request import Claude3Request
 
 
 class BedrockService():
@@ -16,7 +16,7 @@ class BedrockService():
             region_name=os.getenv("BEDROCK_REGION_NAME")
         )
 
-    def invoke_model(self, model: str, body_request: BodyRequest):
+    def invoke_model(self, model: str, body_request: Claude3Request):
         return self.client.invoke_model(
                 modelId=model,
                 body=json.dumps(body_request.model_dump()),

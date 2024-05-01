@@ -10,5 +10,5 @@ httpx
 
 # Providers
 anthropic
-openai
+openai==1.23.6
 boto3

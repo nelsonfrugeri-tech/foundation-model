@@ -12,8 +12,8 @@ class Provider(BaseModel):
 
 
 class PromptParameter(BaseModel):
-    temperature: float
-    maxTokens: int = Field(..., alias="max_tokens")
+    temperature: Optional[float] = None
+    maxTokens: Optional[int] = Field(None, alias="max_tokens")
 
 
 class Message(BaseModel):
