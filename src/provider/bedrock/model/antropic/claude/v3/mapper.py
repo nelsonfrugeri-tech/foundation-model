@@ -8,12 +8,12 @@ from hub.api.adapter.http.v1.model.response.text_response import (
     TextResponse
 )
 
-from provider.bedrock.provider.antropic.model.request.claude_3_request import *
+from provider.bedrock.model.antropic.claude.v3.request import *
 
 class Claude3Mapper:
 
     @classmethod
-    def serializer(cls, text_request_body: TextRequest):
+    def serializer(cls, text_request_body: TextRequest) -> Claude3Request:
         return Claude3Request(
             messages=[
                 Message(
