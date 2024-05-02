@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 
 
 class Usage(BaseModel):
@@ -18,5 +18,5 @@ class Prompt(BaseModel):
 
 
 class TextResponse(BaseModel):
-    usage: Usage
+    usage: Optional[Usage] = None
     prompt: Prompt
