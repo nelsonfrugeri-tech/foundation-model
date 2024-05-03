@@ -5,10 +5,11 @@ from hub.api.adapter.http.v1.model.response.text_response import (
     Usage,
     Message as MessageResponse,
     Prompt,
-    TextResponse
+    TextResponse,
 )
 
 from provider.bedrock.model.antropic.claude.v3.request import *
+
 
 class Claude3Mapper:
 
@@ -16,19 +17,17 @@ class Claude3Mapper:
     def serializer(cls, text_request_body: TextRequest) -> Claude3Request:
         return Claude3Request(
             messages=[
-                Message(
-                    role=msg.role, content=[Content(type="text", text=msg.content)]
-                )
+                Message(role=msg.role, content=[Content(type="text", text=msg.content)])
                 for msg in text_request_body.prompt.messages
             ],
             temperature=text_request_body.prompt.parameter.temperature,
             max_tokens=text_request_body.prompt.parameter.maxTokens,
         )
-    
+
     @classmethod
     def deserializer(cls, response: dict) -> TextResponse:
         result = json.loads(response.get("body").read())
-        
+
         return TextResponse(
             usage=Usage(
                 completionTokens=result["usage"]["input_tokens"],
@@ -46,4 +45,3 @@ class Claude3Mapper:
                 ]
             ),
         )
-        

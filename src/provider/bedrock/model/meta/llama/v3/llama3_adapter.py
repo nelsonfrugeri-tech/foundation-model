@@ -5,6 +5,7 @@ from provider.bedrock.port.bedrock_port import BedrockPort
 from provider.bedrock.service.bedrock_service import BedrockService
 from provider.bedrock.model.meta.llama.v3.llama3_mapper import Llama3Mapper
 
+
 class Llama3Adapter(BedrockPort):
     def __init__(self):
         self.bedrock_service = BedrockService()

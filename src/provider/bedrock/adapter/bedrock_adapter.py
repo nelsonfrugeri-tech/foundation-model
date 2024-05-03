@@ -15,7 +15,7 @@ class BedrockAdapter(InterfacePort):
         self.bedrock_drive = BedrockDrive()
 
     def generate_text(self, text_request_body: TextRequest) -> TextResponse:
-        return self.bedrock_drive.invoke_model(            
+        return self.bedrock_drive.invoke_model(
             model=text_request_body.provider.model.name,
-            text_request_body=text_request_body
+            text_request_body=text_request_body,
         )

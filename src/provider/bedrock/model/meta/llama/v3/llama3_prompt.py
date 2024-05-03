@@ -12,7 +12,7 @@ class Llama3Prompt:
             <|eot_id|>
             <|start_header_id|>assistant<|end_header_id|>
         """
-    
+
     @classmethod
     def function_calling(cls, messages: str, tools: list) -> str:
         return f"""
