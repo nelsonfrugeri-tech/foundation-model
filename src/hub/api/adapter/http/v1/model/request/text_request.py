@@ -22,22 +22,30 @@ class Message(BaseModel):
 
 
 class Prompt(BaseModel):
-    parameter: PromptParameter
+    parameter: Optional[PromptParameter] = None
     messages: List[Message]
+
+
+class Properties(BaseModel):
+    type: str
+    description: Optional[str] = None
+    enum: Optional[list] = None
 
 
 class ToolParameter(BaseModel):
     type: str
-    properties: Dict
+    properties: Dict[str, Properties]
+    required: Optional[List[str]] = None
 
 
 class Tool(BaseModel):
     name: str
     description: str
-    parameters: ToolParameter
+    parameters: Optional[ToolParameter]
 
 
 class TextRequest(BaseModel):
     provider: Provider
     prompt: Prompt
-    tools: Optional[List[Tool]]
+    tools: Optional[List[Tool]] = None
+    tool_choice: Optional[str] = None

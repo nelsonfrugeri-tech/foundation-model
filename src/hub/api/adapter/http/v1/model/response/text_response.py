@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 
 class Usage(BaseModel):
@@ -10,13 +10,19 @@ class Usage(BaseModel):
 
 class Message(BaseModel):
     role: str
-    content: str
+    content: Optional[str] = None
 
 
 class Prompt(BaseModel):
     messages: List[Message]
 
 
+class Tool(BaseModel):
+    name: str
+    arguments: dict
+
+
 class TextResponse(BaseModel):
     usage: Optional[Usage] = None
     prompt: Prompt
+    tools: Optional[List[Tool]] = None
