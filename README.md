@@ -15,7 +15,6 @@
 | OpenAI | GPT-3.5 Turbo | Advanced language model for text generation. | 2048 tokens | Diverse internet text | `temperature`: (Optional[float]) Controls the randomness of the output.  `max_tokens`: (Optional[int]) Limits the length of the generated text. |
 | OpenAI | GPT-4 | Advanced language model for text generation. | 2048 tokens | Diverse internet text | `temperature`: (Optional[float]) Controls the randomness of the output.  `max_tokens`: (Optional[int]) Limits the length of the generated text. |
 | Anthropic | Claude | Generative model with enhancements in safety and ethics. | 4096 tokens | Broad and ethically sourced datasets | `temperature`: (Optional[float]) Controls the randomness of the output.  `max_tokens`: (Optional[int]) Limits the length of the generated text. |
-| Bedrock | Claude | Generative model with enhancements in safety and ethics. | 4096 tokens | Broad and ethically sourced datasets | `temperature`: (Optional[float]) Controls the randomness of the output.  `max_tokens`: (Optional[int]) Limits the length of the generated text. |
 | Bedrock | Llama3 |  |  |  | `temperature`: (Optional[float]) Controls the randomness of the output.  `max_tokens`: (Optional[int]) Limits the length of the generated text. |
 
 ## Parameters
