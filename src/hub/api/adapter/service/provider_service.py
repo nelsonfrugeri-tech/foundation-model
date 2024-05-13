@@ -10,8 +10,6 @@ class ProviderService:
     def __init__(self):
         self.providers = {
             "openai": OpenAIAdapter(),
-            "anthropic": AnthropicAdapter(),
-            "bedrock": BedrockAdapter(),
         }
 
     def generate_text(
