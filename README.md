@@ -16,6 +16,7 @@
 | OpenAI | GPT-4 | Advanced language model for text generation. | 2048 tokens | Diverse internet text | `temperature`: (Optional[float]) Controls the randomness of the output.  `max_tokens`: (Optional[int]) Limits the length of the generated text. |
 | Anthropic | Claude | Generative model with enhancements in safety and ethics. | 4096 tokens | Broad and ethically sourced datasets | `temperature`: (Optional[float]) Controls the randomness of the output.  `max_tokens`: (Optional[int]) Limits the length of the generated text. |
 | Bedrock | Llama3 |  |  |  | `temperature`: (Optional[float]) Controls the randomness of the output.  `max_tokens`: (Optional[int]) Limits the length of the generated text. |
+| Gemini | Gemini 2 (Flash/Pro) | Google's generative models. | - | Proprietary | `temperature`: (Optional[float])  `max_tokens`: (Optional[int]) |
 
 ## Parameters
 
@@ -48,6 +49,8 @@ Create a .env file in the root directory and set the following variables:
 ```bash
 OPENAI_KEY=your_openai_api_key
 ANTHROPIC_KEY=your_anthropic_api_key
+# Gemini models
+GEMINI_KEY=your_gemini_api_key
 # Bedrock credentials are configured in .env.bedrock
 ```
 
@@ -55,6 +58,20 @@ ANTHROPIC_KEY=your_anthropic_api_key
 Run the application:
 ```bash
 python src/app.py
+```
+
+### Example request using Gemini
+
+```bash
+curl -X POST http://localhost:8080/v1/generate/text \
+  -H "Content-Type: application/json" \
+  -d '{
+    "provider": {"name": "gemini", "model": {"name": "gemini-2.0-pro"}},
+    "prompt": {"parameter": {"temperature": 0.7, "max_tokens": 150},
+               "messages": [{"role": "user", "content": "Qual a capital da França?"}]},
+    "tool_choice": "auto",
+    "store": true
+  }'
 ```
 
 **Project Structure:**
