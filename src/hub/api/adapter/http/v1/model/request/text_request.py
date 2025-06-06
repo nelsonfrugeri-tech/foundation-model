@@ -49,3 +49,4 @@ class TextRequest(BaseModel):
     prompt: Prompt
     tools: Optional[List[Tool]] = None
     tool_choice: Optional[str] = None
+    store: bool = True

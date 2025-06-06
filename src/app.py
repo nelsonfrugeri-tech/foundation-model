@@ -1,3 +1,6 @@
+# from src.hub.api.adapter.observability.datadog import start_agent
+# start_agent()
+
 import uvicorn
 import time
 import json
@@ -16,20 +19,10 @@ from hub.api.adapter.http.v1.model.exception.bad_request_exception import (
     BadRequestException,
 )
 
-from datadog_api_client.v2 import ApiClient, Configuration
-from datadog_api_client.v2.api.logs_api import LogsApi
-from datadog_api_client.v2.model.content_encoding import ContentEncoding
-from datadog_api_client.v2.model.http_log import HTTPLog
-from datadog_api_client.v2.model.http_log_item import HTTPLogItem
-
 
 load_dotenv()
 
 fast_api = FastAPI(title="modelhub-api", description="ModelHub API")
-
-
-def add_middleware(fast_api: FastAPI) -> None:
-    fast_api.add_middleware(LogHTTP)
 
 
 def add_exception_handlers(fast_api) -> None:
@@ -42,7 +35,6 @@ def api():
 
     add_exception_handlers(fast_api)
 
-    add_middleware(fast_api)
 
     return fast_api
 
