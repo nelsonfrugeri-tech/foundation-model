@@ -61,6 +61,7 @@ python src/app.py
 ```
 
 ### Example request using Gemini
+The Gemini provider relies on the official `google-genai` SDK.
 
 ```bash
 curl -X POST http://localhost:8080/v1/generate/text \
