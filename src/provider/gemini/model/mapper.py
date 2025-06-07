@@ -1,5 +1,4 @@
-import json
-import google.generativeai as genai
+import google.genai as genai
 from hub.api.adapter.http.v1.model.request.text_request import TextRequest
 from hub.api.adapter.http.v1.model.response.text_response import (
     TextResponse,
@@ -42,13 +41,13 @@ def serialize_request(text_request: TextRequest):
                     },
                     "required": tool.parameters.required or [],
                 }
-            func_decl = genai.types.content_types.FunctionDeclaration(
+            func_decl = genai.types.FunctionDeclaration(
                 name=tool.name,
                 description=tool.description,
                 parameters=params,
             )
             tool_list.append(
-                genai.types.content_types.Tool(function_declarations=[func_decl])
+                genai.types.Tool(function_declarations=[func_decl])
             )
         tools = tool_list
 
@@ -59,7 +58,7 @@ def deserialize_response(response) -> TextResponse:
     usage = None
     if getattr(response, "usage_metadata", None):
         usage = Usage(
-            completionTokens=response.usage_metadata.candidate_token_count,
+            completionTokens=response.usage_metadata.candidates_token_count,
             promptTokens=response.usage_metadata.prompt_token_count,
             totalTokens=response.usage_metadata.total_token_count,
         )
@@ -74,10 +73,7 @@ def deserialize_response(response) -> TextResponse:
         for part in getattr(candidate.content, "parts", []):
             fc = getattr(part, "function_call", None)
             if fc is not None:
-                try:
-                    arguments = json.loads(fc.args)
-                except Exception:
-                    arguments = {}
+                arguments = fc.args or {}
                 tools.append(
                     ToolResponse(name=fc.name, arguments=arguments)
                 )
