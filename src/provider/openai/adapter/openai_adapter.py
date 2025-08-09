@@ -16,6 +16,11 @@ from provider.openai.adapter.model.request.chat_completion_request import (
     Parameters,
     Properties,
 )
+from provider.openai.adapter.model.request.responses_request import (
+    ResponsesRequest,
+    ResponseMessage,
+    ResponseContent,
+)
 from provider.openai.service.openai_service import OpenAIService
 
 from provider.port.interface_port import InterfacePort
@@ -27,33 +32,49 @@ class OpenAIAdapter(InterfacePort):
         self.openai = OpenAIService()
 
     def generate_text(self, text_request_body: TextRequest) -> TextResponse:
-        chat_completion_request = ChatCompletionRequest(
-                model=text_request_body.provider.model.name,
-                messages=[
-                    msg.model_dump() for msg in text_request_body.prompt.messages
+        model_name = text_request_body.provider.model.name
+        if "gpt-5" in model_name.lower():
+            responses_request = ResponsesRequest(
+                model=model_name,
+                input=[
+                    ResponseMessage(
+                        role=msg.role,
+                        content=[ResponseContent(text=msg.content)],
+                    )
+                    for msg in text_request_body.prompt.messages
                 ],
             )
+            self._set_parameters(
+                text_request_body=text_request_body,
+                chat_completion_request=responses_request,
+            )
+            response = self.openai.responses(responses_request)
+            return self._response_message_responses(response)
+
+        chat_completion_request = ChatCompletionRequest(
+            model=model_name,
+            messages=[msg.model_dump() for msg in text_request_body.prompt.messages],
+        )
 
         self._set_parameters(
             text_request_body=text_request_body,
-            chat_completion_request=chat_completion_request
+            chat_completion_request=chat_completion_request,
         )
-        
+
         self._set_tools(
             text_request_body=text_request_body,
-            chat_completion_request=chat_completion_request
+            chat_completion_request=chat_completion_request,
         )
 
         response = self.openai.chat_completion(chat_completion_request)
 
         return (
-                self._response_message_with_tools(
-                     response=response, 
-                     tool_calls=response.choices[0].message.tool_calls 
-                ) 
-                if response.choices[0].message.tool_calls is not None
-                else self._response_message(response)
+            self._response_message_with_tools(
+                response=response, tool_calls=response.choices[0].message.tool_calls
             )
+            if response.choices[0].message.tool_calls is not None
+            else self._response_message(response)
+        )
 
         
     def _response_message_with_tools(
@@ -106,6 +127,23 @@ class OpenAIAdapter(InterfacePort):
                     ]
                 ),
             )
+
+    def _response_message_responses(self, response: dict) -> TextResponse:
+        return TextResponse(
+            usage=Usage(
+                completionTokens=response.usage.completion_tokens,
+                promptTokens=response.usage.prompt_tokens,
+                totalTokens=response.usage.total_tokens,
+            ),
+            prompt=Prompt(
+                messages=[
+                    Message(
+                        role=response.output[0].role,
+                        content=response.output[0].content[0].text,
+                    )
+                ]
+            ),
+        )
     
     def _set_tools(
             self, 
