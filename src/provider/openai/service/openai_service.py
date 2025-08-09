@@ -11,7 +11,15 @@ from provider.openai.adapter.model.request.responses_request import (
     ResponsesRequest,
 )
 
-from observerai.openai import metric_chat_create
+try:
+    from observerai.openai import metric_chat_create
+except Exception:  # pragma: no cover - observerai optional
+    def metric_chat_create():  # type: ignore
+        def decorator(func):
+            return func
+
+        return decorator
+
 
 class OpenAIService:
     def __init__(self):
@@ -26,7 +34,6 @@ class OpenAIService:
             **chat_completion_request.model_dump()
         )
 
-    @metric_chat_create()
     def responses(self, responses_request: ResponsesRequest):
         if not os.getenv("OPENAI_API_KEY") and os.getenv("OPENAI_KEY"):
             os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_KEY")
