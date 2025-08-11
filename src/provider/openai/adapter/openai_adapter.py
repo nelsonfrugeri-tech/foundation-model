@@ -110,100 +110,81 @@ class OpenAIAdapter(InterfacePort):
         return TextResponse(usage=usage, prompt=prompt)
 
     def _extract_output_text(self, response: Any) -> Optional[str]:
-        """Extract textual content from an OpenAI Responses API result.
+        """Best effort extraction of generated text from a Responses API result."""
 
-        The OpenAI SDK may return either Pydantic models or plain dictionaries.
-        This helper normalises both cases and searches for the generated text in
-        the most common locations.
-        """
+        # 1) Prefer the SDK convenience properties
+        for attr in ("output_text", "text"):
+            val = getattr(response, attr, None)
+            if isinstance(val, str) and val.strip():
+                return val
+        if isinstance(response, dict):
+            for key in ("output_text", "text"):
+                val = response.get(key)
+                if isinstance(val, str) and val.strip():
+                    return val
 
-        # 0) normalise to dict when possible
-        as_dict = response if isinstance(response, dict) else None
-        if as_dict is None:
+        # 2) Inspect "output" items which contain content blocks
+        outputs = None
+        if isinstance(response, dict):
+            outputs = response.get("output") or response.get("outputs")
+        else:
+            outputs = getattr(response, "output", None) or getattr(response, "outputs", None)
+
+        if outputs:
+            for item in outputs:
+                content = None
+                if isinstance(item, dict):
+                    content = item.get("content")
+                else:
+                    content = getattr(item, "content", None)
+                if not content:
+                    continue
+                blocks = content if isinstance(content, list) else [content]
+                for block in blocks:
+                    txt = None
+                    if isinstance(block, dict):
+                        txt = block.get("text") or block.get("content")
+                    else:
+                        txt = getattr(block, "text", None) or getattr(block, "content", None)
+                    if isinstance(txt, str) and txt.strip():
+                        return txt
+
+        # 3) Fall back to a recursive scan of any remaining dict structure
+        data = None
+        if isinstance(response, dict):
+            data = response
+        else:
             to_dict = getattr(response, "model_dump", None) or getattr(response, "dict", None)
             if callable(to_dict):
                 try:
-                    as_dict = to_dict()
+                    data = to_dict()
                 except Exception:
-                    as_dict = None
+                    data = None
 
-        # 1) direct ``output_text`` property
-        text = response.get("output_text") if isinstance(response, dict) else getattr(response, "output_text", None)
-        if not text and isinstance(as_dict, dict):
-            text = as_dict.get("output_text")
-        if text:
-            return text
+        def scan(obj: Any) -> Optional[str]:
+            if isinstance(obj, str) and obj.strip():
+                return obj
+            if isinstance(obj, dict):
+                for k, v in obj.items():
+                    if k in ("output_text", "text", "content"):
+                        res = scan(v)
+                        if res:
+                            return res
+                for v in obj.values():
+                    res = scan(v)
+                    if res:
+                        return res
+            if isinstance(obj, list):
+                for v in obj:
+                    res = scan(v)
+                    if res:
+                        return res
+            return None
 
-        # 2) iterate over ``output`` items
-        output = response.get("output") if isinstance(response, dict) else getattr(response, "output", None)
-        if not output and isinstance(as_dict, dict):
-            output = as_dict.get("output")
-
-        parts: List[str] = []
-
-        def add_txt(val: Any) -> None:
-            if isinstance(val, str) and val:
-                parts.append(val)
-
-        if output:
-            for item in output:
-                txt = getattr(item, "text", None) if not isinstance(item, dict) else item.get("text")
-                add_txt(txt)
-
-                content = getattr(item, "content", None) if not isinstance(item, dict) else item.get("content")
-                if isinstance(content, list):
-                    for c in content:
-                        if isinstance(c, str):
-                            add_txt(c)
-                        elif isinstance(c, dict):
-                            add_txt(c.get("text"))
-                            add_txt(c.get("content"))
-                            add_txt(c.get("output_text"))
-                        else:
-                            add_txt(getattr(c, "text", None))
-                            inner = getattr(c, "content", None)
-                            if isinstance(inner, str):
-                                add_txt(inner)
-                elif isinstance(content, dict):
-                    add_txt(content.get("text"))
-                    add_txt(content.get("content"))
-                    add_txt(content.get("output_text"))
-                elif isinstance(content, str):
-                    add_txt(content)
-
-        if parts:
-            return "\n".join(p for p in parts if p)
-
-        # 3) check for ``message`` attribute
-        message = response.get("message") if isinstance(response, dict) else getattr(response, "message", None)
-        if not message and isinstance(as_dict, dict):
-            message = as_dict.get("message")
-        if message:
-            if isinstance(message, dict):
-                add_txt(message.get("content"))
-                add_txt(message.get("text"))
-            else:
-                add_txt(getattr(message, "content", None))
-                add_txt(getattr(message, "text", None))
-            if parts:
-                return "\n".join(p for p in parts if p)
-
-        # 4) final fallback: scan dict for plausible keys
-        def scan_dict(d: dict) -> None:
-            for k, v in d.items():
-                if isinstance(v, str) and k in ("output_text", "text", "content") and v:
-                    parts.append(v)
-                elif isinstance(v, dict):
-                    scan_dict(v)
-                elif isinstance(v, list):
-                    for it in v:
-                        if isinstance(it, dict):
-                            scan_dict(it)
-
-        if isinstance(as_dict, dict):
-            scan_dict(as_dict)
-            if parts:
-                return "\n".join(p for p in parts if p)
+        if data is not None:
+            found = scan(data)
+            if found:
+                return found
 
         return None
 
