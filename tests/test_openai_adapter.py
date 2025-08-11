@@ -173,3 +173,42 @@ def test_generate_text_gpt5_top_level_output_text(monkeypatch):
 
     resp = adapter.generate_text(request)
     assert resp.prompt.messages[0].content == "hola"
+
+
+def test_generate_text_gpt5_ignores_placeholder_text(monkeypatch):
+    def dummy_init(self):
+        pass
+
+    monkeypatch.setattr(OpenAIService, "__init__", dummy_init)
+    monkeypatch.setattr(
+        OpenAIService,
+        "chat_completion",
+        lambda self, req: (_ for _ in ()).throw(Exception("should not call chat_completion")),
+    )
+
+    class DummyResponse:
+        text = "text"
+        usage = types.SimpleNamespace(
+            completion_tokens=2, prompt_tokens=3, total_tokens=5
+        )
+        output = [
+            types.SimpleNamespace(
+                role="assistant",
+                content=[types.SimpleNamespace(text="ok")],
+            )
+        ]
+
+    monkeypatch.setattr(OpenAIService, "responses", lambda self, req: DummyResponse())
+
+    adapter = OpenAIAdapter()
+    request = TextRequest(
+        provider=Provider(name="openai", model=ProviderModel(name="gpt-5")),
+        prompt=Prompt(
+            parameter=PromptParameter(temperature=0.1, max_tokens=20),
+            messages=[Message(role="user", content="hi")],
+        ),
+    )
+
+    resp = adapter.generate_text(request)
+    assert resp.prompt.messages[0].content == "ok"
+    assert resp.prompt.messages[0].content != "text"

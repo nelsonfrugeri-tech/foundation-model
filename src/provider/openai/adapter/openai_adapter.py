@@ -112,16 +112,14 @@ class OpenAIAdapter(InterfacePort):
     def _extract_output_text(self, response: Any) -> Optional[str]:
         """Best effort extraction of generated text from a Responses API result."""
 
-        # 1) Prefer the SDK convenience properties
-        for attr in ("output_text", "text"):
-            val = getattr(response, attr, None)
-            if isinstance(val, str) and val.strip():
-                return val
+        # 1) Prefer the SDK convenience property that already concatenates output text.
+        val = getattr(response, "output_text", None)
+        if isinstance(val, str) and val.strip() and val.strip().lower() != "output_text":
+            return val
         if isinstance(response, dict):
-            for key in ("output_text", "text"):
-                val = response.get(key)
-                if isinstance(val, str) and val.strip():
-                    return val
+            val = response.get("output_text")
+            if isinstance(val, str) and val.strip() and val.strip().lower() != "output_text":
+                return val
 
         # 2) Inspect "output" items which contain content blocks
         outputs = None
@@ -146,7 +144,7 @@ class OpenAIAdapter(InterfacePort):
                         txt = block.get("text") or block.get("content")
                     else:
                         txt = getattr(block, "text", None) or getattr(block, "content", None)
-                    if isinstance(txt, str) and txt.strip():
+                    if isinstance(txt, str) and txt.strip() and txt.strip().lower() != "text":
                         return txt
 
         # 3) Fall back to a recursive scan of any remaining dict structure
@@ -178,7 +176,7 @@ class OpenAIAdapter(InterfacePort):
                     res = scan(v)
                     if res:
                         return res
-            elif isinstance(obj, str) and obj.strip():
+            elif isinstance(obj, str) and obj.strip() and obj.strip().lower() != "text":
                 return obj
             return None
 
