@@ -131,3 +131,45 @@ def test_generate_text_gpt5_openai_objects(monkeypatch):
 
     resp = adapter.generate_text(request)
     assert resp.prompt.messages[0].content == "hello"
+
+
+def test_generate_text_gpt5_top_level_output_text(monkeypatch):
+    def dummy_init(self):
+        pass
+
+    monkeypatch.setattr(OpenAIService, "__init__", dummy_init)
+    monkeypatch.setattr(
+        OpenAIService,
+        "chat_completion",
+        lambda self, req: (_ for _ in ()).throw(Exception("should not call chat_completion")),
+    )
+
+    from openai.types.responses import Response, ResponseOutputText
+
+    response_obj = Response.model_construct(
+        id="r2",
+        created_at=0,
+        model="gpt-5",
+        output=[
+            ResponseOutputText.model_construct(
+                text="hola",
+                type="output_text",
+                annotations=[],
+            )
+        ],
+        status="completed",
+    )
+
+    monkeypatch.setattr(OpenAIService, "responses", lambda self, req: response_obj)
+
+    adapter = OpenAIAdapter()
+    request = TextRequest(
+        provider=Provider(name="openai", model=ProviderModel(name="gpt-5")),
+        prompt=Prompt(
+            parameter=PromptParameter(temperature=0.1, max_tokens=20),
+            messages=[Message(role="user", content="hi")],
+        ),
+    )
+
+    resp = adapter.generate_text(request)
+    assert resp.prompt.messages[0].content == "hola"

@@ -162,23 +162,24 @@ class OpenAIAdapter(InterfacePort):
                     data = None
 
         def scan(obj: Any) -> Optional[str]:
-            if isinstance(obj, str) and obj.strip():
-                return obj
             if isinstance(obj, dict):
-                for k, v in obj.items():
-                    if k in ("output_text", "text", "content"):
-                        res = scan(v)
+                # Prioritize common text-bearing keys before iterating others
+                for k in ("output_text", "text", "content", "output", "outputs"):
+                    if k in obj:
+                        res = scan(obj[k])
                         if res:
                             return res
                 for v in obj.values():
                     res = scan(v)
                     if res:
                         return res
-            if isinstance(obj, list):
+            elif isinstance(obj, list):
                 for v in obj:
                     res = scan(v)
                     if res:
                         return res
+            elif isinstance(obj, str) and obj.strip():
+                return obj
             return None
 
         if data is not None:
